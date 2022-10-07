@@ -198,5 +198,191 @@ state char(2)
 )
 row format delimited fields terminated by ',';
 
+hive> create table orders_no_partition(
+    > id string,
+    > customer_id string,
+    > product_id string,
+    > quantity int,
+    > amount double,
+    > zipcode char(5),
+    > state char(2)
+    > )
+    > row format delimited fields terminated by ',';
+OK
+Time taken: 0.104 seconds
+
+
+#Load data into non partitioned table:
+
+load data local inpath
+'/home/cloudera/Downloads/orders_CA_with_state.csv'
+into table orders_no_partition;
+
+
+[cloudera@quickstart Downloads]$ ls -ltr
+total 20168
+-rwxrwxrwx 1 cloudera cloudera      123 Sep 30 20:35 products.csv
+-rwxrwxrwx 1 cloudera cloudera       95 Oct  1 03:01 freshproducts.csv
+-rwxrwxrwx 1 cloudera cloudera      120 Oct  1 06:21 authors.csv
+-rwxrwxrwx 1 cloudera cloudera      171 Oct  1 08:34 mobilephones.csv
+-rwxrwxrwx 1 cloudera cloudera      171 Oct  1 08:43 mobilephones_new.csv
+-rw-rw-r-- 1 cloudera cloudera 20608027 Oct  1 19:39 hive-exec-1.2.2.jar
+-rwxrwxrwx 1 cloudera cloudera      153 Oct  1 19:57 sample_data.txt
+-rwxrwxrwx 1 cloudera cloudera      152 Oct  7 10:34 orders_NY_with_state.csv
+-rwxrwxrwx 1 cloudera cloudera      132 Oct  7 10:34 orders_CT.csv
+-rwxrwxrwx 1 cloudera cloudera      120 Oct  7 10:34 orders_CA_with_state.csv
+-rwxrwxrwx 1 cloudera cloudera      108 Oct  7 10:34 orders_CA.csv
+
+
+#To check the contents of file
+
+[cloudera@quickstart Downloads]$ cat orders_CA_with_state.csv
+o1, c1, p1, 1, 1.11, 90111,CA
+o2, c2, p2, 1, 2.22, 90222,CA
+o3, c3, p3, 1, 3.33, 90333,CA
+o4, c4, p4, 1, 4.44, 90444,CA
+[cloudera@quickstart Downloads]$ cat orders_CT_with_state.csv
+cat: orders_CT_with_state.csv: No such file or directory
+[cloudera@quickstart Downloads]$ cat orders_NY_with_state.csv
+o100, c100, p10, 10, 10.11, 900111,NY
+o200, c200, p20, 10, 20.22, 900222,NY
+o300, c300, p30, 10, 30.33, 900333,NY
+o400, c400, p40, 10, 40.44, 900444,NY
+[cloudera@quickstart Downloads]$ cat orders_CT_with_state.csv
+o10, c10, p10, 10, 10.11, 900111,CT
+o20, c20, p20, 10, 20.22, 900222,CT
+o30, c30, p30, 10, 30.33, 900333,CT
+o40, c40, p40, 10, 40.44, 900444,CT
+
+
+#Loading data into non partitioned table:
+load data local inpath
+'/home/cloudera/Downloads/orders_CA_with_state.csv'
+into table orders_no_partition;
+
+hive> load data local inpath
+    > '/home/cloudera/Downloads/orders_CA_with_state.csv'
+    > into table orders_no_partition;
+Loading data to table trendytech.orders_no_partition
+Table trendytech.orders_no_partition stats: [numFiles=1, totalSize=120]
+OK
+Time taken: 0.482 seconds
+
+load data local inpath
+'/home/cloudera/Downloads/orders_CT_with_state.csv'
+into table orders_no_partition;
+
+load data local inpath
+'/home/cloudera/Downloads/orders_NY_with_state.csv'
+into table orders_no_partition;
+
+hive> load data local inpath
+    > '/home/cloudera/Downloads/orders_CT_with_state.csv'
+    > into table orders_no_partition;
+Loading data to table trendytech.orders_no_partition
+Table trendytech.orders_no_partition stats: [numFiles=2, totalSize=264]
+OK
+Time taken: 0.335 seconds
+hive> load data local inpath
+    > '/home/cloudera/Downloads/orders_NY_with_state.csv'
+    > into table orders_no_partition;
+Loading data to table trendytech.orders_no_partition
+Table trendytech.orders_no_partition stats: [numFiles=3, totalSize=416]
+OK
+Time taken: 0.334 seconds
+
+
+# Display records from non partitioned table
+
+hive> select * from orders_no_partition;
+OK
+o1	 c1	 p1	NULL	1.11	 9011	CA
+o2	 c2	 p2	NULL	2.22	 9022	CA
+o3	 c3	 p3	NULL	3.33	 9033	CA
+o4	 c4	 p4	NULL	4.44	 9044	CA
+o10	 c10	 p10	NULL	10.11	 9001	CT
+o20	 c20	 p20	NULL	20.22	 9002	CT
+o30	 c30	 p30	NULL	30.33	 9003	CT
+o40	 c40	 p40	NULL	40.44	 9004	CT
+o100	 c100	 p10	NULL	10.11	 9001	NY
+o200	 c200	 p20	NULL	20.22	 9002	NY
+o300	 c300	 p30	NULL	30.33	 9003	NY
+o400	 c400	 p40	NULL	40.44	 9004	NY
+Time taken: 0.113 seconds, Fetched: 12 row(s)
+
+
+[cloudera@quickstart Downloads]$ hadoop fs -ls /user/hive/warehouse/trendytech.db/orders_no_partition
+Found 3 items
+-rwxrwxrwx   1 cloudera supergroup        120 2022-10-07 11:22 /user/hive/warehouse/trendytech.db/orders_no_partition/orders_CA_with_state.csv
+-rwxrwxrwx   1 cloudera supergroup        144 2022-10-07 11:24 /user/hive/warehouse/trendytech.db/orders_no_partition/orders_CT_with_state.csv
+-rwxrwxrwx   1 cloudera supergroup        152 2022-10-07 11:24 /user/hive/warehouse/trendytech.db/orders_no_partition/orders_NY_with_state.csv
+
+
+Step-2: Creating Dynamic Partitioned table
+
+create table orders_partition(
+id string,
+customer_id string,
+product_id string,
+quantity int,
+amount double,
+zipcode char(5))
+partitioned by (state char(2))
+row format delimited fields terminated by ',';
+
+Step-3: Load the data from non partition table to the partitioned table:
+
+insert into table orders_partition
+partition (state)
+select * from orders_no_partition;
+
+hive> insert into table orders_partition
+    > partition (state)
+    > select * from orders_no_partition;
+Query ID = cloudera_20221007113939_3bdc0636-518c-4d6c-8052-7f13d92b772b
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1662730789713_0030, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1662730789713_0030/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1662730789713_0030
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2022-10-07 11:39:47,830 Stage-1 map = 0%,  reduce = 0%
+2022-10-07 11:40:26,207 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 5.27 sec
+MapReduce Total cumulative CPU time: 5 seconds 270 msec
+Ended Job = job_1662730789713_0030
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to: hdfs://quickstart.cloudera:8020/user/hive/warehouse/trendytech.db/orders_partition/.hive-staging_hive_2022-10-07_11-39-04_064_628519215960742224-1/-ext-10000
+Loading data to table trendytech.orders_partition partition (state=null)
+	 Time taken for load dynamic partitions : 701
+	Loading partition {state=CT}
+	Loading partition {state=NY}
+	Loading partition {state=CA}
+	 Time taken for adding to write entity : 10
+Partition trendytech.orders_partition{state=CA} stats: [numFiles=1, numRows=4, totalSize=100, rawDataSize=96]
+Partition trendytech.orders_partition{state=CT} stats: [numFiles=1, numRows=4, totalSize=116, rawDataSize=112]
+Partition trendytech.orders_partition{state=NY} stats: [numFiles=1, numRows=4, totalSize=124, rawDataSize=120]
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1   Cumulative CPU: 5.27 sec   HDFS Read: 5899 HDFS Write: 544 SUCCESS
+Total MapReduce CPU Time Spent: 5 seconds 270 msec
+OK
+Time taken: 85.186 seconds
+
+
+hive> show partitions orders_partition;
+OK
+state=CA
+state=CT
+state=NY
+Time taken: 0.138 seconds, Fetched: 3 row(s)
+
+
+[cloudera@quickstart Downloads]$ hadoop fs -ls /user/hive/warehouse/trendytech.db/orders_partition
+Found 3 items
+drwxrwxrwx   - cloudera supergroup          0 2022-10-07 11:40 /user/hive/warehouse/trendytech.db/orders_partition/state=CA
+drwxrwxrwx   - cloudera supergroup          0 2022-10-07 11:40 /user/hive/warehouse/trendytech.db/orders_partition/state=CT
+drwxrwxrwx   - cloudera supergroup          0 2022-10-07 11:40 /user/hive/warehouse/trendytech.db/orders_partition/state=NY
+
 
   
