@@ -1,0 +1,11 @@
+Partitioning works well when there is low cardinality
+
+That means Number of distinct values in the column is low.
+Example: State
+It’s not good customer_id (1 million customer) cardinality is high i.e. number of distinct values in the column is 1 million.
+Customers table:
+Select * from customers where customer_id = ?
+In such a case you should go for bucketing.
+How many partitions gets created? 
+It is equal to number of distinct values.
+In case of bucketing we have define a fixed number of buckets during table creation
