@@ -1,0 +1,15 @@
+# Advance Hive
+
+# Optimizing Queries on Big Data
+# So the optimization in hive are of 3 kinds mainly
+
+1. Table structure level optimization
+
+
+Queries on Big Data
+
+Hive tries to simplify query writing and improve query performance in many ways.
+
+1. Design Tables to optimize queries
+2. Structure queries so they run faster
+3. Simplify query expressions so they are easy to maintain
