@@ -1,11 +1,37 @@
-Partitioning works well when there is low cardinality
-
-That means Number of distinct values in the column is low.
-Example: State
+Partitioning works well when we have low cardinality.
+That means number of distinct values in the column is low.
+Example: state (50)
 It’s not good customer_id (1 million customer) cardinality is high i.e. number of distinct values in the column is 1 million.
 Customers table:
 Select * from customers where customer_id = ?
 In such a case you should go for bucketing.
 How many partitions gets created? 
 It is equal to number of distinct values.
-In case of bucketing we have define a fixed number of buckets during table creation
+In case of bucketing we have to define a fixed number of buckets during table creation.
+In case of states (50):
+How many partitions gets created – 50 partitions.
+But bucketing is based on modulo function that we have to determine
+In HDFS
+•	Each partition is a folder
+•	Each bucket is a file
+
+Suppose there are 10 product ids
+And there are 3 buckets
+Product ID = 1,2,3,4,5,6,7,8,9,10
+Number of buckets = 0,1,2
+Bucketing = 1%3 (1 modulo 3)
+                      6 % 3 = 0
+
+Product ids
+1,
+2,
+3,
+4,
+5,
+.
+.
+100000
+You are dividing this into 3 buckets
+bucket_0 - 3, 6
+bucket_1 – 1, 4
+bucket_2 – 2, 5
