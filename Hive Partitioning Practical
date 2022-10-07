@@ -100,4 +100,42 @@ o3, c3, p3, 1, 3.33, 90333
 o4, c4, p4, 1, 4.44, 90444
 [cloudera@quickstart Downloads]$ 
 
+[cloudera@quickstart Downloads]$ cat orders_CT.csv
+o10, c10, p10, 10, 10.11, 900111
+o20, c20, p20, 10, 20.22, 900222
+o30, c30, p30, 10, 30.33, 900333
+o40, c40, p40, 10, 40.44, 900444
+
+
+# Load data from files into a Parititioned table:
+
+load data local inpath
+'/home/cloudera/Downloads/orders_CA.csv'
+into table orders_w_partition
+partition (state = "CA");
+
+hive> load data local inpath
+    > '/home/cloudera/Downloads/orders_CA.csv'
+    > into table orders_w_partition
+    > partition (state = "CA");
+Loading data to table trendytech.orders_w_partition partition (state=CA)
+Partition trendytech.orders_w_partition{state=CA} stats: [numFiles=1, numRows=0, totalSize=108, rawDataSize=0]
+OK
+Time taken: 4.318 seconds
+
+load data local inpath
+'/home/cloudera/Downloads/orders_CT.csv'
+into table orders_w_partition
+partition (state = "CT");
+
+
+hive> load data local inpath
+    > '/home/cloudera/Downloads/orders_CT.csv'
+    > into table orders_w_partition
+    > partition (state = "CT");
+Loading data to table trendytech.orders_w_partition partition (state=CT)
+Partition trendytech.orders_w_partition{state=CT} stats: [numFiles=1, numRows=0, totalSize=132, rawDataSize=0]
+OK
+Time taken: 0.862 seconds
+
   
