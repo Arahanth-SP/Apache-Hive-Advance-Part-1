@@ -1,0 +1,103 @@
+
+Partitioning & Bucketing
+
+Both partitioning and bucketing tries to optimize by dividing the data into manageable parts or chunks.
+and finally the intention is to just scan one chunk of data and ignore rest of them.
+
+Partitioning enables performance optimizations
+Split data into smaller subsets, separating records into manageable parts based on column value
+Data splits may not be of the same size per partition
+Each of these units will be stored in a different directory
+
+If there are 30 distinct values for the partition column then there will be 30 directories.
+
+There are Two types of Partitioning
+1. Static Partitioning 
+2. Dynamic Partitioning
+
+create table orders_w_partition(
+id string,
+customer_id string,
+product_id string,
+quantity int,
+amount double,
+zipcode char(5))
+partitioned by (state char(2))
+row format delimited fields terminated by ','
+
+
+[cloudera@quickstart ~]$ hive
+
+Logging initialized using configuration in file:/etc/hive/conf.dist/hive-log4j.properties
+WARNING: Hive CLI is deprecated and migration to Beeline is recommended.
+hive> 
+[cloudera@quickstart ~]$ hive
+
+hive> use trendytech;
+OK
+Time taken: 1.807 seconds
+
+hive> create table orders_w_partition(
+    > id string,
+    > customer_id string,
+    > product_id string,
+    > quantity int,
+    > amount double,
+    > zipcode char(5))
+    > partitioned by (state char(2))
+    > row format delimited fields terminated by ',';
+OK
+Time taken: 0.561 seconds
+
+hive> describe formatted orders_w_partition;
+OK
+# col_name            	data_type           	comment             
+	 	 
+id                  	string              	                    
+customer_id         	string              	                    
+product_id          	string              	                    
+quantity            	int                 	                    
+amount              	double              	                    
+zipcode             	char(5)             	                    
+	 	 
+# Partition Information	 	 
+# col_name            	data_type           	comment             
+	 	 
+state               	char(2)             	                    
+	 	 
+# Detailed Table Information	 	 
+Database:           	trendytech          	 
+Owner:              	cloudera            	 
+CreateTime:         	Fri Oct 07 10:28:33 PDT 2022	 
+LastAccessTime:     	UNKNOWN             	 
+Protect Mode:       	None                	 
+Retention:          	0                   	 
+Location:           	hdfs://quickstart.cloudera:8020/user/hive/warehouse/trendytech.db/orders_w_partition	 
+Table Type:         	MANAGED_TABLE       	 
+Table Parameters:	 	 
+	numPartitions       	0                   
+	transient_lastDdlTime	1665163713   
+  
+  # Copying the File Orders_CA.csv into 'home/cloudera/Downloads
+  
+  [cloudera@quickstart ~]$ cd Downloads/
+[cloudera@quickstart Downloads]$ ls -ltr
+total 20156
+-rwxrwxrwx 1 cloudera cloudera      123 Sep 30 20:35 products.csv
+-rwxrwxrwx 1 cloudera cloudera       95 Oct  1 03:01 freshproducts.csv
+-rwxrwxrwx 1 cloudera cloudera      120 Oct  1 06:21 authors.csv
+-rwxrwxrwx 1 cloudera cloudera      171 Oct  1 08:34 mobilephones.csv
+-rwxrwxrwx 1 cloudera cloudera      171 Oct  1 08:43 mobilephones_new.csv
+-rw-rw-r-- 1 cloudera cloudera 20608027 Oct  1 19:39 hive-exec-1.2.2.jar
+-rwxrwxrwx 1 cloudera cloudera      153 Oct  1 19:57 sample_data.txt
+-rwxrwxrwx 1 cloudera cloudera      108 Oct  7 10:34 orders_CA.csv
+
+
+[cloudera@quickstart Downloads]$ cat orders_CA.csv
+o1, c1, p1, 1, 1.11, 90111
+o2, c2, p2, 1, 2.22, 90222
+o3, c3, p3, 1, 3.33, 90333
+o4, c4, p4, 1, 4.44, 90444
+[cloudera@quickstart Downloads]$ 
+
+  
