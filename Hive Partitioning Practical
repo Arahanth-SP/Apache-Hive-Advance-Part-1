@@ -138,4 +138,65 @@ Partition trendytech.orders_w_partition{state=CT} stats: [numFiles=1, numRows=0,
 OK
 Time taken: 0.862 seconds
 
+# Display partition details of a partitioned table:
+
+show partitions orders_w_partition;
+
+hive> show partitions orders_w_partition;
+OK
+state=CA
+state=CT
+Time taken: 0.285 seconds, Fetched: 2 row(s)
+
+Queries on partition table:
+
+select id, state, customer_id, product_id from orders_w_partition where state ="CA";
+
+hive> select id, state, customer_id, product_id from orders_w_partition where state ="CA";
+OK
+o1	CA	 c1	 p1
+o2	CA	 c2	 p2
+o3	CA	 c3	 p3
+o4	CA	 c4	 p4
+Time taken: 4.691 seconds, Fetched: 4 row(s)
+
+# To see the location of the files in hdfs
+[cloudera@quickstart Downloads]$ hadoop fs -ls /user/hive/warehouse/trendytech.db/orders_w_partition
+Found 2 items
+drwxrwxrwx   - cloudera supergroup          0 2022-10-07 10:44 /user/hive/warehouse/trendytech.db/orders_w_partition/state=CA
+drwxrwxrwx   - cloudera supergroup          0 2022-10-07 10:47 /user/hive/warehouse/trendytech.db/orders_w_partition/state=CT
+
+
+[cloudera@quickstart Downloads]$ hadoop fs -ls /user/hive/warehouse/trendytech.db/orders_w_partition/state=CA
+Found 1 items
+-rwxrwxrwx   1 cloudera supergroup        108 2022-10-07 10:44 /user/hive/warehouse/trendytech.db/orders_w_partition/state=CA/orders_CA.csv
+
+
+Enabling Dynamic Partitioning:
+
+SET hive.exec.dynamic.partition=true;
+SET hive.exec.dynamic.partition.mode=nonstrict;
+
+hive> SET hive.exec.dynamic.partition=true;
+hive> SET hive.exec.dynamic.partition.mode=nonstrict;
+
+Generally Dyanamic Partitiong is a Three Step Process:
+1. Step-1 : create a normal table without any partition and have the data loaded in it. (table1)
+2. Step-2: create the partition table with partition on a column name. (table2)
+3. Step-3: transfer the data from normal table to paritioned table. (transfer from table1 to table2)
+
+Step-1: Create a normal table (non partition table)
+
+create table orders_no_partition(
+id string,
+customer_id string,
+product_id string,
+quantity int,
+amount double,
+zipcode char(5),
+state char(2)
+)
+row format delimited fields terminated by ',';
+
+
   
