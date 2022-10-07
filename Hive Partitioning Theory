@@ -15,4 +15,96 @@ So Query will run on all 4 machines in parallel: All records on each machine nee
 What if the dataset is huge (not 500MB instead goes in Tera bytes) on each node?
 What if this is the most common query run?
 
-Partitioning: Customers in the US; Data may be naturally split into 
+Partitioning: Customers in the US; Data may be naturally split into states
+
+If US has 50 states then there will be 50 directories which are created using partition on state.
+
+Data i customer table is logically divided into 50 smaller parts. each part will hold for each state.
+
+CA, WA, NY,..... Folders 
+Records from each state will be in a different directory
+
+Managed Table: The records in a Hive table are typically stored in HDFS by default in /user/hive/warehouse
+/user/hive/warehouse/trendytech.db/orders
+
+/state=CA
+/state=NY
+/state=WA
+/state=NJ
+
+/user/hive/warehouse/trendytech.db/customers
+
+when there is no partitioning of data then the data files will be directly inside customers folder.
+
+When there is partitioning then:
+
+/user/hive/warehouse/trendytech.db/customers/state=CA
+/user/hive/warehouse/trendytech.db/customers/state=WA
+/user/hive/warehouse/trendytech.db/customers/state=NY
+/user/hive/warehouse/trendytech.db/customers/state=CT
+
+select * from customer where state =? (10000 times in a day) most frequent used query 
+select * from customer where customer_type =? (5 times in a day) less frequent used query
+
+Objective: To optimize most frequently used query
+
+Use partitions intelligently for the most common queries
+
+
+
+Partitioning Trade-Offs:
+
+Customers table: customer_id 1,2,3,4,5.....................................1 million
+
+select * from customers where customer_id= ? (10000 times in a day)
+
+If you partition on customer_id then we need to create 1 million folders
+
+that means we have a lot of distinct values (or cardinality of the customer_id column is very high)
+
+if we try to do partitioning on such a column where cardinality is too high then we will get a lot folders created.
+
+In this case if we partition the table on customer_id column then there will be 1 million folders created
+
+and your namenode has to handle all this metadata for 1 million folders.
+
+
+conclusion: if the cardinality of column is very high then we should not go with partitioning on that column.
+
+In this example we could have done bucketing 
+
+Large Number of Partitions:
+Partition on customer id on the orders table?
+Millions of partitions, an HDFS directory for each partition
+Huge overhead for the NameNode in Hadoop
+May optimize some queries but be detrimental for others
+
+Small Number of Partitions:
+Partition on product quantity on the orders table?
+Very few partitions, few logical groupings in our data
+No real optimizations on queries run
+No reduction in the data scanned by queries
+
+
+Static and Dynamic Partitioning:
+
+There are 2 types of partioning in hive:
+1. static partitioning
+2. dynamic partitioning
+
+In static partitioning we should have an idea of our data and we should be loading each partition manually. This is a tedious process.
+
+In Dynamic partitioning the partitions are created automatically without any manual loading.
+
+when we do not know the data in advance then we go with dynamic partitioning
+
+when we already know the data then we go with static partitioning.
+
+Static partitioning however is faster than dynamic partitioing.
+
+
+
+
+
+
+
