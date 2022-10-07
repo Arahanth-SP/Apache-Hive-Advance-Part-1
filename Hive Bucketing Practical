@@ -17,3 +17,116 @@ We should not use partitioning when cardinality of column is high.
 partitioning provides a logical division of data.
 however bucketing divides the data based on hash values.
 
+we need to tell the number of buckets well in advance.
+when we are creating the table.
+customers with 4 buckets
+
+each partition is a folder or directory
+however each bucket is a file
+
+bucket 0,bucket 1, bucket 2, bucket 3
+1 % 4 = 1 - 2nd bucket
+2 % 4 = 2 - 3rd bucket
+3 % 4 = 3 - 4th bucket
+4 % 4 = 0 - 1st bucket
+.
+.
+1000000
+
+3 step process
+
+step 1: create a normal table with some data
+step 2: create a bucketed table on some column
+step 3: loading data from normal table to bucketed table.
+
+
+create table products_no_buckets(
+id int,
+name string,
+cost double,
+category string)
+row format delimited fields terminated by ',';
+
+hive> create table products_no_buckets(
+    > id int,
+    > name string,
+    > cost double,
+    > category string)
+    > row format delimited fields terminated by ',';
+OK
+Time taken: 0.147 seconds
+
+# Load data (newproducts.csv) into the non bucketed table:
+
+load data local inpath
+'/home/cloudera/Downloads/newproducts.csv'
+into table products_no_buckets;
+
+
+
+[cloudera@quickstart Downloads]$ ls -ltr
+total 20176
+-rwxrwxrwx 1 cloudera cloudera      123 Sep 30 20:35 products.csv
+-rwxrwxrwx 1 cloudera cloudera       95 Oct  1 03:01 freshproducts.csv
+-rwxrwxrwx 1 cloudera cloudera      120 Oct  1 06:21 authors.csv
+-rwxrwxrwx 1 cloudera cloudera      171 Oct  1 08:34 mobilephones.csv
+-rwxrwxrwx 1 cloudera cloudera      171 Oct  1 08:43 mobilephones_new.csv
+-rw-rw-r-- 1 cloudera cloudera 20608027 Oct  1 19:39 hive-exec-1.2.2.jar
+-rwxrwxrwx 1 cloudera cloudera      153 Oct  1 19:57 sample_data.txt
+-rwxrwxrwx 1 cloudera cloudera      152 Oct  7 10:34 orders_NY_with_state.csv
+-rwxrwxrwx 1 cloudera cloudera      144 Oct  7 10:34 orders_CT_with_state.csv
+-rwxrwxrwx 1 cloudera cloudera      132 Oct  7 10:34 orders_CT.csv
+-rwxrwxrwx 1 cloudera cloudera      120 Oct  7 10:34 orders_CA_with_state.csv
+-rwxrwxrwx 1 cloudera cloudera      108 Oct  7 10:34 orders_CA.csv
+-rwxrwxrwx 1 cloudera cloudera      213 Oct  7 10:34 newproducts.csv
+
+
+[cloudera@quickstart Downloads]$ cat newproducts.csv
+1,iPhone,379.99,mobiles
+2,doll,8.99,toys
+3,Galaxy X,100,mobile
+5,Nokia Y,39.99,mobile
+6,truck,7.99,toys
+7,makeup,100,fashion
+8,earings,69,fashion
+9,chair,129,furniture
+10,table,269,furniture
+11,waterpistol,9,toys
+
+hive> load data local inpath
+    > '/home/cloudera/Downloads/newproducts.csv'
+    > into table products_no_buckets;
+Loading data to table trendytech.products_no_buckets
+Table trendytech.products_no_buckets stats: [numFiles=1, totalSize=213]
+OK
+Time taken: 0.314 seconds
+
+
+hive> select * from products_no_buckets;
+OK
+1	iPhone	379.99	mobiles
+2	doll	8.99	toys
+3	Galaxy X	100.0	mobile
+5	Nokia Y	39.99	mobile
+6	truck	7.99	toys
+7	makeup	100.0	fashion
+8	earings	69.0	fashion
+9	chair	129.0	furniture
+10	table	269.0	furniture
+11	waterpistol	9.0	toys
+Time taken: 0.094 seconds, Fetched: 10 row(s)
+
+
+SET hive.enforce.bucketing;
+hive.enforce.bucketing=false
+SET hive.enforce.bucketing=true
+SET hive.enforce.bucketing;
+
+hive> SET hive.enforce.bucketing;
+hive.enforce.bucketing=false
+hive> SET hive.enforce.bucketing=true
+    > ;
+hive> SET hive.enforce.bucketing;
+hive.enforce.bucketing=true
+
+
