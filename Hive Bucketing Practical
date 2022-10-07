@@ -1,0 +1,19 @@
+Hive Bucketing
+
+customers table
+1000000
+1
+2
+3
+4
+5
+.
+.
+1000000
+select * from customers where customer_id = ?
+
+We should not use partitioning when cardinality of column is high.
+
+partitioning provides a logical division of data.
+however bucketing divides the data based on hash values.
+
