@@ -1,0 +1,18 @@
+Partitioning Tables in Hive
+
+Split data into smaller subsets
+Separate records into manageable parts based on column value
+
+Example: Consider an e-commerce site with order data from across the United States
+
+You have 500 MB data of 4 node cluster: 500 MB divided into 4 parts based on default block size of 128 MB
+Records will be split across 4 machines in the cluster
+
+Example Query: select * from Orders where state ="WA"
+
+So Query will run on all 4 machines in parallel: All records on each machine need to be scanned to retrieve results
+
+What if the dataset is huge (not 500MB instead goes in Tera bytes) on each node?
+What if this is the most common query run?
+
+Partitioning: Customers in the US; Data may be naturally split into 
