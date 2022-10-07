@@ -5,11 +5,49 @@
 
 1. Table structure level optimization
 
+We have two choices 
+Partitioning
+Bucketing
+
+Both work on same process: divide the data into smaller parts
+
+Example: If you have 40000 rows of data can you divide this data into  - scan all 40000 records
+10000 rows - scanned
+10000 rows 
+10000 rows 
+10000 rows
+
+Is there a way we can scan only portion of records i.e instead of scanning 40000 records we can scan portion of it 10000 rows
+
 
 Queries on Big Data
 
 Hive tries to simplify query writing and improve query performance in many ways.
 
+1. Design Tables to optimize queries : Partitioning and Bucketing
+2. Structure queries so they run faster: Join optimizations
+3. Simplify query expressions so they are easy to maintain: Window Functions
+
+
+ Design Tables: When we talk about table design to optimize queries
+
+1. Partitioning and 
+2. Bucketing of Tables
+
+
 1. Design Tables to optimize queries
 2. Structure queries so they run faster
 3. Simplify query expressions so they are easy to maintain
+
+
+
+2. Optimizing the query that we are writing
+
+Join takes lot of time
+When we talk about query level optimization we mostly talk about join optimization
+
+3. Simplify Query Expressions: 
+
+Windowing functions
+
+
