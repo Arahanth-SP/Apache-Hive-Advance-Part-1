@@ -1,0 +1,32 @@
+
+# Partitioning with 2 Columns
+
+Countries 
+
+Country = India  
+  State = UP 
+  State = Delhi
+
+Country = US 
+  State = CA 
+  State = NY
+
+# First, Set Hive Properties to allow Dynamic Partitioning
+SET hive.exec.dynamic.partition=true;
+SET hive.exec.dynamic.partition.mode = nonstrict;
+
+3 Step Process:
+
+Create a non partitioned table within trendytech database:
+
+Step-1: Creating a normal table and loading the data
+
+create table orders_no_partition1 (
+id string,
+customer_id string,
+product_id string,
+quantity int,
+amount double,
+zipcode char(5),
+country char(2),
+state char(2)
