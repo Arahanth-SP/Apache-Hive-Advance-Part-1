@@ -51,4 +51,20 @@ N3 – Block3 of BIG TABLE with 25000 Rows – ALL 100 ROWS OF SMALL TABLE
 N4 – Block4 of BIG TABLE with 25000 Rows – ALL 100 ROWS OF SMALL TABLE
 
 
+•	Each node will hold complete small table and parts of big table.
+•	Parts of the larger table are distributed to each mapper.
+Different Kind of Joins:
+1.	INNER JOIN (NATURAL JOIN)
+Show only the matching records from both the tables.
+2.	LEFT OUTER JOIN
+Show all the matching records + show all the non-matching records from the left table with nulls on the right side.
+3.	RIGHT OUTER JOIN
+Show all the matching records + show all the non-matching records from the right table with nulls on the right side.
+4.	FULL OUTER JOIN
+UNION of LEFT OUTER + RIGHT OUTER
+QUESTION: Can a INNER JOIN be treated as a MAP side join provided the LEFT Table is small enough to fit in memory and the RIGHT TABLE is Large.
+
+
+
+
 
