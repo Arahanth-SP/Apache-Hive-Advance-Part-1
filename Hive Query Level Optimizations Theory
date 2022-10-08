@@ -20,3 +20,14 @@ table2(key, values)
 The Join column is the key 
 The remaining columns are the values
 
+We have 2 stages for this mapreduce job
+•	Map
+•	Reduce
+
+Whenever we can write the join in a way that reducer does not have to do anything then we say such join as map side join.
+Whenever feasible then we should try to write the join in a way that it is a map side join only.
+First condition for map side join is:
+•	All tables except one should be small enough to fit in memory.
+One table is small and other is big
+•	Two tables should be small and one should be big.
+•	Except one table all the other tables should be small.
