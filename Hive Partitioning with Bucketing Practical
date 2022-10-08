@@ -1,0 +1,43 @@
+
+#Partitioning with Bucketing
+
+Each partition is a folder
+Each bucket is a file
+
+partition -> bucket ( Can you have file inside folder Yes)
+
+bucket-> partition (Can you have folder inside file This is wrong No)
+
+So Order is First Partition and then Bucket.
+
+Example: Customers Table
+
+we can have the state as the partition column
+state = CA
+4 files          (only one file scanned and 3 will be skipped)
+state = NY
+4 files
+state = NJ
+4 files
+
+on state we are partitioning and on customer_id we are bucketing into 4 buckets.
+
+Select * from customers where state =ca and customer_id =4
+
+In the above scenario out of 12 parts we skipped 11.
+
+Step-1: create a normal table with some data (products_no_buckets)
+Step-2: create a partitioned and bucketed table on some column
+Step-3: loading data from normal table to bucketed table.
+
+
+# Create a Partition table with Bucketing:
+
+create table product_partitioned_buckets (
+id int,
+name string,
+cost double
+)
+partitioned by (category string)
+clustered by (id) into 4 buckets
+row format delimited fields terminated by ',';
