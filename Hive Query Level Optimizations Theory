@@ -1,0 +1,22 @@
+
+3 Categories of Optimizations
+
+1. Table structure level optimization: Partitioning and Bucketing
+2. query level optimization : Join optimizations
+3. simplifying the query expressions : Windowing functions
+
+1.	Try to minimize the number of JOIN columns if possible 
+Because if we minimize the join columns then there will be less mapreduce jobs.
+
+•	Internally even a join is executed as a map reduce job.
+•	mapper will give the join column as the key and mapper gives all the other columns as the value.
+•	Key – The join column
+•	Value-  all the remaining columns
+
+table1 (product_id, all the other columns)
+table1 (key, values)
+table2 (id, all the other columns list2 5)
+table2(key, values)
+The Join column is the key 
+The remaining columns are the values
+
