@@ -41,3 +41,33 @@ cost double
 partitioned by (category string)
 clustered by (id) into 4 buckets
 row format delimited fields terminated by ',';
+
+
+hive> create table product_partitioned_buckets (
+    > id int,
+    > name string,
+    > cost double
+    > )
+    > partitioned by (category string)
+    > clustered by (id) into 4 buckets
+    > row format delimited fields terminated by ',';
+OK
+Time taken: 0.105 seconds
+
+
+# Set Partitioning & bucketing properties in Hive:
+
+SET hive.exec.dynamic.partition = true;
+SET hive.exec.dynamic.partition.mode = nonstrict;
+SET hive.enforce.bucketing = true;
+
+# Load data into the table:
+
+insert into table products_partitioned_buckets
+partition (category)
+select id, name, cost, category
+from products_no_buckets;
+
+
+
+
