@@ -79,4 +79,103 @@ Found 1 items
 [cloudera@quickstart Downloads]$ 
 
 
+hive> select * from orders_no_partition1;
+OK
+o1	c1	p1	1	379.99	90210	US	CA
+o2	c2	p2	1	8.99	90002	US	CA
+o3	c33	p100	1	100.0	94305	US	TX
+o4	c444	p992	1	669.0	94304	US	TX
+o1	c11	p4	1	12.0	91410	UK	JI
+o2	c12	p6	1	5.0	91552	UK	JI
+o3	c13	p80	1	70.0	91226	UK	JJ
+o4	c14	p92	1	58.0	92000	UK	JJ
+Time taken: 0.104 seconds, Fetched: 8 row(s)
+
+
+# Create a partition table based on two columns:
+
+create table all_orders (
+id string,
+customer_id string,
+product_id string,
+quantity int,
+amount double,
+postalcode string
+)
+partitioned by (country string, state string)
+row format delimited fields terminated by ',';
+
+
+hive> create table all_orders (
+    > id string,
+    > customer_id string,
+    > product_id string,
+    > quantity int,
+    > amount double,
+    > postalcode string
+    > )
+    > partitioned by (country string, state string)
+    > row format delimited fields terminated by ',';
+OK
+Time taken: 0.152 seconds
+
+
+# Load data from non partition table to the partitioned table:
+
+insert into table all_orders
+partition (country, state)
+select * from orders_no_partition1;
+
+
+hive> insert into table all_orders
+    > partition (country, state)
+    > select * from orders_no_partition1;
+Query ID = cloudera_20221007215656_3ffb6425-d951-4833-bc60-433cc2e239f5
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1662730789713_0032, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1662730789713_0032/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1662730789713_0032
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2022-10-07 21:57:28,703 Stage-1 map = 0%,  reduce = 0%
+2022-10-07 21:58:00,665 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 5.37 sec
+MapReduce Total cumulative CPU time: 5 seconds 370 msec
+Ended Job = job_1662730789713_0032
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to: hdfs://quickstart.cloudera:8020/user/hive/warehouse/trendytech.db/all_orders/.hive-staging_hive_2022-10-07_21-56-47_841_1820338075652493529-1/-ext-10000
+Loading data to table trendytech.all_orders partition (country=null, state=null)
+	 Time taken for load dynamic partitions : 1363
+	Loading partition {country=UK, state=JJ}
+	Loading partition {country=UK, state=JI}
+	Loading partition {country=US, state=TX}
+	Loading partition {country=US, state=CA}
+	 Time taken for adding to write entity : 4
+Partition trendytech.all_orders{country=UK, state=JI} stats: [numFiles=1, numRows=2, totalSize=45, rawDataSize=43]
+Partition trendytech.all_orders{country=UK, state=JJ} stats: [numFiles=1, numRows=2, totalSize=48, rawDataSize=46]
+Partition trendytech.all_orders{country=US, state=CA} stats: [numFiles=1, numRows=2, totalSize=46, rawDataSize=44]
+Partition trendytech.all_orders{country=US, state=TX} stats: [numFiles=1, numRows=2, totalSize=53, rawDataSize=51]
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1   Cumulative CPU: 5.37 sec   HDFS Read: 5574 HDFS Write: 469 SUCCESS
+Total MapReduce CPU Time Spent: 5 seconds 370 msec
+OK
+Time taken: 77.695 seconds
+
+
+hive> show partitions all_orders;
+OK
+country=UK/state=JI
+country=UK/state=JJ
+country=US/state=CA
+country=US/state=TX
+Time taken: 0.175 seconds, Fetched: 4 row(s)
+
+[cloudera@quickstart Downloads]$ hadoop fs -ls /user/hive/warehouse/trendytech.db/all_orders
+Found 2 items
+drwxrwxrwx   - cloudera supergroup          0 2022-10-07 21:58 /user/hive/warehouse/trendytech.db/all_orders/country=UK
+drwxrwxrwx   - cloudera supergroup          0 2022-10-07 21:58 /user/hive/warehouse/trendytech.db/all_orders/country=US
+
+
+
 
