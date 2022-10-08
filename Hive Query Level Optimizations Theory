@@ -62,9 +62,15 @@ Show all the matching records + show all the non-matching records from the left 
 Show all the matching records + show all the non-matching records from the right table with nulls on the right side.
 4.	FULL OUTER JOIN
 UNION of LEFT OUTER + RIGHT OUTER
+
 QUESTION: Can a INNER JOIN be treated as a MAP side join provided the LEFT Table is small enough to fit in memory and the RIGHT TABLE is Large.
+ANSWER: When LEFT TABLE is small then INNER JOINS can be treated as MAP SIDE JOINS.
 
+QUESTION: Can a LEFT OUTER JOIN be treated as a MAP side join provided the LEFT Table is small enough to fit in memory and the RIGHT TABLE is Large.
+ANSWER: NO When LEFT TABLE is small then LEFT OUTER JOINS cannot be treated as MAP SIDE JOINS.
 
+QUESTION: Can a RIGHT OUTER JOIN be treated as a MAP side join provided the LEFT Table is small enough to fit in memory and the RIGHT TABLE is Large.
+ANSWER: YES, When LEFT TABLE is Small
 
 
 
