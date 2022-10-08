@@ -63,10 +63,143 @@ SET hive.enforce.bucketing = true;
 
 # Load data into the table:
 
-insert into table products_partitioned_buckets
+insert into table product_partitioned_buckets
 partition (category)
 select id, name, cost, category
 from products_no_buckets;
+
+hive> insert into table product_partitioned_buckets
+    > partition (category)
+    > select id, name, cost, category
+    > from products_no_buckets;
+Query ID = cloudera_20221007231010_78f8cca4-5d66-4139-9b64-d238440cb144
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 4
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1662730789713_0033, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1662730789713_0033/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1662730789713_0033
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 4
+2022-10-07 23:11:11,253 Stage-1 map = 0%,  reduce = 0%
+2022-10-07 23:11:36,358 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 3.8 sec
+2022-10-07 23:12:36,409 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 3.8 sec
+2022-10-07 23:13:11,796 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 6.14 sec
+2022-10-07 23:13:13,884 Stage-1 map = 100%,  reduce = 67%, Cumulative CPU 13.27 sec
+2022-10-07 23:13:26,254 Stage-1 map = 100%,  reduce = 75%, Cumulative CPU 16.17 sec
+2022-10-07 23:13:28,015 Stage-1 map = 100%,  reduce = 83%, Cumulative CPU 18.96 sec
+2022-10-07 23:13:29,130 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 24.76 sec
+MapReduce Total cumulative CPU time: 24 seconds 760 msec
+Ended Job = job_1662730789713_0033
+Loading data to table trendytech.product_partitioned_buckets partition (category=null)
+	 Time taken for load dynamic partitions : 1249
+	Loading partition {category=mobile}
+	Loading partition {category=mobiles}
+	Loading partition {category=fashion}
+	Loading partition {category=furniture}
+	Loading partition {category=toys}
+	 Time taken for adding to write entity : 8
+Partition trendytech.product_partitioned_buckets{category=fashion} stats: [numFiles=4, numRows=2, totalSize=30, rawDataSize=28]
+Partition trendytech.product_partitioned_buckets{category=furniture} stats: [numFiles=4, numRows=2, totalSize=29, rawDataSize=27]
+Partition trendytech.product_partitioned_buckets{category=mobile} stats: [numFiles=4, numRows=2, totalSize=33, rawDataSize=31]
+Partition trendytech.product_partitioned_buckets{category=mobiles} stats: [numFiles=4, numRows=1, totalSize=16, rawDataSize=15]
+Partition trendytech.product_partitioned_buckets{category=toys} stats: [numFiles=4, numRows=3, totalSize=44, rawDataSize=41]
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 4   Cumulative CPU: 24.76 sec   HDFS Read: 20842 HDFS Write: 962 SUCCESS
+Total MapReduce CPU Time Spent: 24 seconds 760 msec
+OK
+Time taken: 177.426 seconds
+
+
+
+
+
+
+# show partitions products_partitioned_buckets;
+
+
+show partitions products_partitioned_buckets;
+
+hive> show partitions product_partitioned_buckets;
+OK
+category=fashion
+category=furniture
+category=mobile
+category=mobiles
+category=toys
+Time taken: 0.135 seconds, Fetched: 5 row(s)
+
+
+[cloudera@quickstart Downloads]$ hadoop fs -ls /user/hive/warehouse/trendytech.db/product_partitioned_buckets
+Found 5 items
+drwxrwxrwx   - cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=fashion
+drwxrwxrwx   - cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=furniture
+drwxrwxrwx   - cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=mobile
+drwxrwxrwx   - cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=mobiles
+drwxrwxrwx   - cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=toys
+
+
+[cloudera@quickstart Downloads]$ hadoop fs -ls /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=fashion
+Found 4 items
+-rwxrwxrwx   1 cloudera supergroup         15 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=fashion/000000_0
+-rwxrwxrwx   1 cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=fashion/000001_0
+-rwxrwxrwx   1 cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=fashion/000002_0
+-rwxrwxrwx   1 cloudera supergroup         15 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=fashion/000003_0
+
+
+[cloudera@quickstart Downloads]$ hadoop fs -cat /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=fashion/000000_0
+8,earings,69.0
+
+
+hive> select * from product_partitioned_buckets
+    > TABLESAMPLE(bucket 1 out of 4);
+OK
+8	earings	69.0	fashion
+Time taken: 0.284 seconds, Fetched: 1 row(s)
+
+hive> select * from product_partitioned_buckets
+    > TABLESAMPLE(bucket 2 out of 4);
+OK
+9	chair	129.0	furniture
+5	Nokia Y	39.99	mobile
+1	iPhone	379.99	mobiles
+Time taken: 0.155 seconds, Fetched: 3 row(s)
+
+
+# Structure in hdfs
+
+hadoop fs -ls -R /user/hive/warehouse/trendytech.db/product_partitioned_buckets
+
+drwxrwxrwx   - cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=fashion
+-rwxrwxrwx   1 cloudera supergroup         15 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=fashion/000000_0
+-rwxrwxrwx   1 cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=fashion/000001_0
+-rwxrwxrwx   1 cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=fashion/000002_0
+-rwxrwxrwx   1 cloudera supergroup         15 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=fashion/000003_0
+drwxrwxrwx   - cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=furniture
+-rwxrwxrwx   1 cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=furniture/000000_0
+-rwxrwxrwx   1 cloudera supergroup         14 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=furniture/000001_0
+-rwxrwxrwx   1 cloudera supergroup         15 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=furniture/000002_0
+-rwxrwxrwx   1 cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=furniture/000003_0
+drwxrwxrwx   - cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=mobile
+-rwxrwxrwx   1 cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=mobile/000000_0
+-rwxrwxrwx   1 cloudera supergroup         16 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=mobile/000001_0
+-rwxrwxrwx   1 cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=mobile/000002_0
+-rwxrwxrwx   1 cloudera supergroup         17 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=mobile/000003_0
+drwxrwxrwx   - cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=mobiles
+-rwxrwxrwx   1 cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=mobiles/000000_0
+-rwxrwxrwx   1 cloudera supergroup         16 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=mobiles/000001_0
+-rwxrwxrwx   1 cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=mobiles/000002_0
+-rwxrwxrwx   1 cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=mobiles/000003_0
+drwxrwxrwx   - cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=toys
+-rwxrwxrwx   1 cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=toys/000000_0
+-rwxrwxrwx   1 cloudera supergroup          0 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=toys/000001_0
+-rwxrwxrwx   1 cloudera supergroup         25 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=toys/000002_0
+-rwxrwxrwx   1 cloudera supergroup         19 2022-10-07 23:13 /user/hive/warehouse/trendytech.db/product_partitioned_buckets/category=toys/000003_0
+
 
 
 
