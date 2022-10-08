@@ -31,3 +31,24 @@ First condition for map side join is:
 One table is small and other is big
 •	Two tables should be small and one should be big.
 •	Except one table all the other tables should be small.
+
+Left Table                                                                                         Right Table
+Smaller								                                                                               BIG	
+1									                                                                                    1
+2									                                                                                    2 		
+3										                                                                                  3
+4									                                                                                  	4											
+.										                                                                                  .	
+.										                                                                                  .
+100 Rows									                                                                      100000 Rows	
+
+•	SMALL TABLE HAS 100 ROWS
+•	BIG TABLE HAS 100000 ROWS – 512 MB
+
+N1 – Block1 of BIG TABLE with 25000 Rows – ALL 100 ROWS OF SMALL TABLE
+N2 – Block2 of BIG TABLE with 25000 Rows – ALL 100 ROWS OF SMALL TABLE
+N3 – Block3 of BIG TABLE with 25000 Rows – ALL 100 ROWS OF SMALL TABLE
+N4 – Block4 of BIG TABLE with 25000 Rows – ALL 100 ROWS OF SMALL TABLE
+
+
+
