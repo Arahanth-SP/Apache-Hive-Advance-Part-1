@@ -129,4 +129,77 @@ hive> SET hive.enforce.bucketing=true
 hive> SET hive.enforce.bucketing;
 hive.enforce.bucketing=true
 
+#Step-2: Create a bucketed table on some column
+
+# Now, Create a Hive table with buckets
+
+create table products_w_buckets(
+id int,
+name string,
+cost double,
+category string
+)
+CLUSTERED BY (id) INTO 4 BUCKETS;
+
+hive> create table products_w_buckets(
+    > id int,
+    > name string,
+    > cost double,
+    > category string
+    > )
+    > CLUSTERED BY (id) INTO 4 BUCKETS;
+OK
+Time taken: 0.818 seconds
+
+#Step-3: Load data from non bucketed table to bucketed table:
+
+from products_no_buckets
+insert into table products_w_buckets
+select id, name, cost, category;
+
+hive> from products_no_buckets
+    > insert into table products_w_buckets
+    > select id, name, cost, category;
+Query ID = cloudera_20221007192020_b7571756-3997-42f8-aeee-de278fa6389e
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 4
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1662730789713_0031, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1662730789713_0031/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1662730789713_0031
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 4
+2022-10-07 19:21:35,451 Stage-1 map = 0%,  reduce = 0%
+2022-10-07 19:22:03,733 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 4.46 sec
+2022-10-07 19:23:05,555 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 4.46 sec
+2022-10-07 19:24:07,109 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 4.46 sec
+2022-10-07 19:24:13,162 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 6.48 sec
+2022-10-07 19:24:14,866 Stage-1 map = 100%,  reduce = 67%, Cumulative CPU 12.46 sec
+2022-10-07 19:24:38,139 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 29.74 sec
+MapReduce Total cumulative CPU time: 29 seconds 740 msec
+Ended Job = job_1662730789713_0031
+Loading data to table trendytech.products_w_buckets
+Table trendytech.products_w_buckets stats: [numFiles=4, numRows=10, totalSize=225, rawDataSize=215]
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 4   Cumulative CPU: 29.74 sec   HDFS Read: 19907 HDFS Write: 565 SUCCESS
+Total MapReduce CPU Time Spent: 29 seconds 740 msec
+OK
+Time taken: 239.689 seconds
+
+
+# If you mention 4 buckets then 4 reducers will work; so number of buckets is equal to number of reducers
+
+[cloudera@quickstart Downloads]$ hadoop fs -ls -R /user/hive/warehouse/trendytech.db/products_w_buckets
+-rwxrwxrwx   1 cloudera supergroup         23 2022-10-07 19:24 /user/hive/warehouse/trendytech.db/products_w_buckets/000000_0
+-rwxrwxrwx   1 cloudera supergroup         71 2022-10-07 19:24 /user/hive/warehouse/trendytech.db/products_w_buckets/000001_0
+-rwxrwxrwx   1 cloudera supergroup         60 2022-10-07 19:24 /user/hive/warehouse/trendytech.db/products_w_buckets/000002_0
+-rwxrwxrwx   1 cloudera supergroup         71 2022-10-07 19:24 /user/hive/warehouse/trendytech.db/products_w_buckets/000003_0
+
+
+
+
 
