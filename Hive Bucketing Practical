@@ -200,6 +200,27 @@ Time taken: 239.689 seconds
 -rwxrwxrwx   1 cloudera supergroup         71 2022-10-07 19:24 /user/hive/warehouse/trendytech.db/products_w_buckets/000003_0
 
 
+# Display records from bucketed table in bucket by bucket:
+
+select * from products_w_buckets
+TABLESAMPLE (bucket 1 out of 4);
+
+hive> select * from products_w_buckets
+    > TABLESAMPLE (bucket 1 out of 4);
+OK
+8	earings	69.0	fashion
+Time taken: 0.593 seconds, Fetched: 1 row(s)
+
+select * from products_w_buckets
+TABLESAMPLE (bucket 2 out of 4);
+
+hive> select * from products_w_buckets
+    > TABLESAMPLE (bucket 2 out of 4);
+OK
+9	chair	129.0	furniture
+5	Nokia Y	39.99	mobile
+1	iPhone	379.99	mobiles
+Time taken: 0.121 seconds, Fetched: 3 row(s)
 
 
 
