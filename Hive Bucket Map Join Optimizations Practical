@@ -298,12 +298,98 @@ Conclusion: inner joins can be treated as map side join when left table/right ta
 
 1.	Inner Join : All matching records from both the table
 2.	Left Outer Join: All the matching records from both the tables + all the records from the left table which do not have a match.
+3.	Right Outer Join: All the matching records from both the tables + all the records from right table which do not have a match.
+4.	Full Outer Join: Union of left outer and right outer join
 
 Scenario-1: can a left outer join be treated as map side join when left table is small?
+Conclusion: No
+Scenario-2: can a right outer join be treated as map side join when left table is small?
+Conclusion: Yes
+Scenario-3: can a right outer join be treated as map side join when right table is small?
+Conclusion: No
+Scenario-4: can a left outer join be treated as map side join when right table is small?
+Conclusion: Yes
 
-Scenario-2: can a left outer join be treated as map side join when right table is small?
+#Left Outer Join as map side join when left table is small
+
+SELECT /*+ MAPJOIN(orders) */ c.customer_id, c.customer_fname, c.customer_lname, o.order_id, o.order_date FROM orders o LEFT OUTER JOIN customers c ON (
+o.order_customer_id = c.customer_id) limit 5;
 
 
+#Right Outer Join as a map side join when left table is small
+SELECT /*+ MAPJOIN(orders) */ c.customer_id, c.customer_fname, c.customer_lname, o.order_id, o.order_date FROM orders o RIGHT OUTER JOIN customers c ON (
+o.order_customer_id = c.customer_id) limit 5;
 
+hive> SELECT /*+ MAPJOIN(orders) */ c.customer_id, c.customer_fname, c.customer_lname, o.order_id, o.order_date FROM orders o RIGHT OUTER JOIN customers c ON (
+    > o.order_customer_id = c.customer_id) limit 5;
+    
+    
+# Left Outer Join as a Map Side Join When right table is small
+
+SELECT /*+ MAPJOIN(customers) */ c.customer_id, c.customer_fname, c.customer_lname, o.order_id, o.order_date FROM orders o LEFT OUTER JOIN customers c ON (
+o.order_customer_id = c.customer_id) limit 5;
+
+
+•	If left table is small then left outer join will fail and right outer join will work
+•	If right table is small then left outer join will work and right outer join will fail
+•	Full outer join won’t work
+
+Note: A full outer join cannot be treated as map side join in any case.
+
+# Full Outer Join as Map Side Join
+SELECT /*+ MAPJOIN(customers) */ c.customer_id, c.customer_fname, c.customer_lname, o.order_id, o.order_date FROM orders o FULL OUTER JOIN customers c ON (
+o.order_customer_id = c.customer_id) limit 5;
+
+# What is a small table as per hive?
+
+There is a property:
+hive.mapjoin.smalltable.filesize
+
+The value of this property indicates the size. If a file is having lesser size than it is considered as small size.
+
+set hive.mapjoin.smalltable.filesize;
+hive.mapjoin.smalltable.filesize=25000000
+
+hive> set hive.mapjoin.smalltable.filesize;
+hive.mapjoin.smalltable.filesize=25000000
+
+
+# Bucket Map Join:
+
+Bucket Map Join:
+•	What if you have 2 big tables?
+•	Map side join won’t work
+•	In this case you can go for Bucket Map Join
+Constraints:
+1.	Both the tables should be bucketed on join column
+Customers table should be bucketed on customer_id.
+Orders table should be bucketed on order_customer_id
+2.	Number of buckets in bigger table should be an integral multiple of number of buckets in smaller table
+If small table has 4 buckets 
+Then large table can have 4, 8, 12,16 buckets
+
+# We need to enable the Bucketing Map Join
+
+set hive.enforce.bucketing;
+
+hive> set hive.enforce.bucketing;
+hive.enforce.bucketing=false
+hive> set hive.enforce.bucketing=true;
+hive> set hive.enforce.bucketing;
+hive.enforce.bucketing=true
+
+# Create the first Table (bucketed) in Hive
+
+CREATE external TABLE customers_bucketed(
+customer_id int,
+customer_fname string,
+customer_lname string,
+customer_email string,
+customer_password string,
+customer_street string,
+customer_city string,
+customer_state string,
+customer_zipcode string) clustered
+by(customer_id) into 4 buckets row format delimited fields terminated BY ',';
 
 
