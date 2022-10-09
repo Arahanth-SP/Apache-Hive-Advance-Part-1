@@ -196,6 +196,26 @@ OK
 5	Robert	Hudson	XXXXXXXXX	XXXXXXXXX	10 Crystal River Mall 	Caguas	PR	00725
 Time taken: 1.451 seconds, Fetched: 5 row(s)
 
+# JOINS check the value of property hive.auto.covert.join
+
+set hive.auto.convert.join;
+set hive.auto.convert.join=false;
+set hive.auto.convert.join;
+
+
+hive> set hive.auto.convert.join;
+hive.auto.convert.join=true
+hive> set hive.auto.convert.join=false;
+hive> set hive.auto.convert.join;
+hive.auto.convert.join=false
+
+# Try running the join query now
+
+SELECT c.customer_id, c.customer_fname, c.customer_lname, o.order_id, o.order_date FROM orders o JOIN customers c ON (
+o.order_customer_id = c.customer_id) limit 10;
+
+hive> SELECT c.customer_id, c.customer_fname, c.customer_lname, o.order_id, o.order_date FROM orders o JOIN customers c ON (
+    > o.order_customer_id = c.customer_id) limit 10;
 
 
 
