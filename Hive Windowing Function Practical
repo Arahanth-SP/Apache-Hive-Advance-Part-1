@@ -80,6 +80,69 @@ o9,Redmond,Cheese,2017-01-05,15
 13,Sammamish,Bread,2017-01-07,5
 14,Issaquah,Tomato,2017-01-07,6
 
+# Creating Windowing Function for Running Total
+
+from groceries
+select id, revenue, day, sum(revenue) over (order by id
+rows between unbounded preceding and current row ) as running_total;
+
+unbounded preceding means the first row
+
+hive> from groceries
+    > select id, revenue, day, sum(revenue) over (order by id
+    > rows between unbounded preceding and current row ) as running_total;
+
+# To get running sum of groceries table- order by day:
+
+from groceries
+select id, revenue, day, sum(revenue) over (order by day
+rows between unbounded preceding and current row ) as running_total;
+
+hive> from groceries
+    > select id, revenue, day, sum(revenue) over (order by day
+    > rows between unbounded preceding and current row ) as running_total;
+
+# To get running average of groceries table:
+from groceries
+select id, revenue, day, avg(revenue) over (order by id
+rows between unbounded preceding and current row ) as running_average;
+
+hive> from groceries
+    > select id, revenue, day, avg(revenue) over (order by id
+    > rows between unbounded preceding and current row ) as running_average;
+
+# Calculate aggregations over a window on blocks of records
+
+create table groceries1(
+id string,
+store string,
+product string,
+day date,
+revenue double
+)
+row format delimited fields terminated by ',';
+
+hive> create table groceries1(
+    > id string,
+    > store string,
+    > product string,
+    > day date,
+    > revenue double
+    > )
+    > row format delimited fields terminated by ',';
+OK
+Time taken: 0.133 seconds
+
+# Loading the data into groceries1 table
+
+load data local inpath '/home/cloudera/Downloads/groceries1.csv' into table groceries1;
+
+hive> load data local inpath '/home/cloudera/Downloads/groceries1.csv' into table groceries1;
+Loading data to table trendytech.groceries1
+Table trendytech.groceries1 stats: [numFiles=1, totalSize=437]
+OK
+Time taken: 0.364 seconds
+
 
 
 
