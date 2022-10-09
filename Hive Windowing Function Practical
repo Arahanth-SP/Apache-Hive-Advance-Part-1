@@ -1,0 +1,87 @@
+# Windowing Functions
+
+A suite of functions which are syntactic sugar for complex queries
+Reduces the need for intermediate tables to store temporary data
+Make complex operations simple without needing many intermediate calculations
+
+# Create a table groceries inside Trendytech database:
+
+create table groceries(
+id string,
+store string,
+product string,
+day date,
+revenue double
+)
+row format delimited fields terminated by ',';
+
+hive> use trendytech;
+OK
+Time taken: 0.021 seconds
+
+hive> create table groceries(
+    > id string,
+    > store string,
+    > product string,
+    > day date,
+    > revenue double
+    > )
+    > row format delimited fields terminated by ',';
+OK
+Time taken: 0.107 seconds
+
+# Load data into groceries table
+
+load data local inpath '/home/cloudera/Downloads/groceries.csv' into table groceries;
+
+hive> load data local inpath '/home/cloudera/Downloads/groceries.csv' into table groceries;
+Loading data to table trendytech.groceries
+Table trendytech.groceries stats: [numFiles=1, totalSize=437]
+OK
+Time taken: 0.721 seconds
+
+Display all records of table:
+select * from groceries;
+
+hive> select * from groceries;
+OK
+o1	Seattle	Bananas	2017-01-01	7.0
+o2	Kent	Apples	2017-01-02	20.0
+o3	Bellevue	Flowers	2017-01-02	10.0
+o4	Redmond	Meat	2017-01-03	40.0
+o5	Seattle	Potatoes	2017-01-04	9.0
+o6	Bellevue	Bread	2017-01-04	5.0
+o7	Redmond	Bread	2017-01-05	5.0
+o8	Issaquah	Onion	2017-01-05	4.0
+o9	Redmond	Cheese	2017-01-05	15.0
+10	Issaquah	Onion	2017-01-06	4.0
+11	Renton	Bread	2017-01-05	5.0
+12	Issaquah	Onion	2017-01-07	4.0
+13	Sammamish	Bread	2017-01-07	5.0
+14	Issaquah	Tomato	2017-01-07	6.0
+Time taken: 0.095 seconds, Fetched: 14 row(s)
+
+
+# Checking the contents of groceries.csv
+
+[cloudera@quickstart Downloads]$ cat groceries.csv
+o1,Seattle,Bananas,2017-01-01,7
+o2,Kent,Apples,2017-01-02,20
+o3,Bellevue,Flowers,2017-01-02,10
+o4,Redmond,Meat,2017-01-03,40
+o5,Seattle,Potatoes,2017-01-04,9
+o6,Bellevue,Bread,2017-01-04,5
+o7,Redmond,Bread,2017-01-05,5
+o8,Issaquah,Onion,2017-01-05,4
+o9,Redmond,Cheese,2017-01-05,15
+10,Issaquah,Onion,2017-01-06,4
+11,Renton,Bread,2017-01-05,5
+12,Issaquah,Onion,2017-01-07,4
+13,Sammamish,Bread,2017-01-07,5
+14,Issaquah,Tomato,2017-01-07,6
+
+
+
+
+
+
