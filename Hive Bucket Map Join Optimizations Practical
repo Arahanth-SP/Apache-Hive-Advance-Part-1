@@ -504,9 +504,10 @@ set hive.auto.convert.join;
 Conditions for Sort Merge Bucket join (SMB):
 1.	Both the tables should be bucketed on the join column
 2.	Number of buckets in larger table should be exactly equal to number of buckets in the smaller table
-3.	Data in both tables should be sorted based on join column.
+3.	Data in both tables should be sorted based on join column in ascending order.
 Note: Here both the tables can be large as well.
 So let us try to see an example. We need to create 2 tables bucketed on join column. We will have same number of buckets in both tables.
+
 
 
 
