@@ -1,0 +1,7 @@
+# Hive Join Optimizations
+
+Hive Join Optimizations:
+3 important kind of join optimizations:
+1.	Map Side Join (is very important)
+2.	Bucket Map Join
+3.	SMB (Sort Merge Bucket Join)
