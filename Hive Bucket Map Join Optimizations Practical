@@ -393,3 +393,50 @@ customer_zipcode string) clustered
 by(customer_id) into 4 buckets row format delimited fields terminated BY ',';
 
 
+hive> CREATE external TABLE customers_bucketed(
+    > customer_id int,
+    > customer_fname string,
+    > customer_lname string,
+    > customer_email string,
+    > customer_password string,
+    > customer_street string,
+    > customer_city string,
+    > customer_state string,
+    > customer_zipcode string) clustered
+    > by(customer_id) into 4 buckets row format delimited fields terminated BY ',';
+OK
+Time taken: 0.217 seconds
+
+# Loading data from normal table to bucketed table
+
+insert into customers_bucketed select * from customers;
+
+# Create the second Table (bucketed) in Hive
+
+CREATE external TABLE orders_bucketed(
+order_id int,
+order_date string,
+order_customer_id int,
+order_status string) clustered
+by(order_customer_id) into 8 buckets row format delimited fields terminated BY ',';
+
+hive> CREATE external TABLE orders_bucketed(
+    > order_id int,
+    > order_date string,
+    > order_customer_id int,
+    > order_status string) clustered
+    > by(order_customer_id) into 8 buckets row format delimited fields terminated BY ',';
+OK
+Time taken: 0.209 seconds
+
+# Loading the data into orders_bucketed table
+insert into orders_bucketed select * from orders;
+
+
+When we created the external table we didn’t specify any location. That is why the data should be in default directory
+
+/user/hive/warehouse/bigdatabysumit.db/customers_bucketed
+/user/hive/warehouse/bigdatabysumit.db/orders_bucketed
+
+
+
