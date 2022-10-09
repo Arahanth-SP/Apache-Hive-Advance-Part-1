@@ -248,6 +248,27 @@ But what if we do not want to go with automatic conversion.
 Rather we want to specify using some hints.
 
 
+#Set the hint manually to invoke map side join
+
+set hive.auto.convert.join=false;
+set hive.ignore.mapjoin.hint;
+hive.ignore.mapjoin.hint=true
+set hive.ignore.mapjoin.hint=false;
+
+
+hive> set hive.ignore.mapjoin.hint;
+hive.ignore.mapjoin.hint=true
+hive> set hive.ignore.mapjoin.hint;
+hive.ignore.mapjoin.hint=false
+
+# Now let us try to execute inner join as map side join using hints indicating left table is small
+
+SELECT /*+ MAPJOIN(orders) */ c.customer_id, c.customer_fname, c.customer_lname, o.order_id, o.order_date FROM orders o JOIN customers c ON (
+o.order_customer_id = c.customer_id) limit 5;
+
+hive> SELECT /*+ MAPJOIN(orders) */ c.customer_id, c.customer_fname, c.customer_lname, o.order_id, o.order_date FROM orders o JOIN customers c ON (
+    > o.order_customer_id = c.customer_id) limit 5;
+
 
 
 
