@@ -5,3 +5,21 @@ Hive Join Optimizations:
 1.	Map Side Join (is very important)
 2.	Bucket Map Join
 3.	SMB (Sort Merge Bucket Join)
+
+•	There is no reduce phase. The entire joining activity will happen at the mapper end.
+
+Can we always have a join as map side join?
+However if certain criteria matches then we go for mapside join.
+
+We want to join 2 tables
+•	Out of 2 tables, one table should be smaller so that it can fit in memory of datanode.
+
+We want to join 3 or more tables
+•	All the tables except one are smaller to fit in memory 
+
+Consider we have 2 tables
+1.	Orders
+2.	Customers
+One of them is big table and other is small table
+
+
