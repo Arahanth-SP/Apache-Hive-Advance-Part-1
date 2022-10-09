@@ -275,4 +275,35 @@ SELECT /*+ MAPJOIN(customers) */ c.customer_id, c.customer_fname, c.customer_lna
 o.order_customer_id = c.customer_id) limit 5;
 
 
+# Hive Join Optimizations Practical-2
+
+•	Map Side Joins
+
+Created 2 external hive tables
+•	Orders
+•	Customers
+
+1.	Set the auto map join property to false and we saw that reducer is coming to play
+2.	We set the property to true and then we can see that there were 0 reducers.
+3.	We set the auto map join property to false we said that hints should not be ignored.
+4.	In hint we mentioned the left table
+5.	In hint we mentioned the right table.
+6.	Inner joins are possible as map side join when one table is small enough to fit in memory
+7.	In both the cases
+•	Left table is small
+•	Right table is small
+8.	Inner join was treated as map side join.
+Conclusion: inner joins can be treated as map side join when left table/right table is small enough to fit in memory.
+
+
+1.	Inner Join : All matching records from both the table
+2.	Left Outer Join: All the matching records from both the tables + all the records from the left table which do not have a match.
+
+Scenario-1: can a left outer join be treated as map side join when left table is small?
+
+Scenario-2: can a left outer join be treated as map side join when right table is small?
+
+
+
+
 
