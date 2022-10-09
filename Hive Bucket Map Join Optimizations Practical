@@ -507,6 +507,36 @@ Conditions for Sort Merge Bucket join (SMB):
 3.	Data in both tables should be sorted based on join column in ascending order.
 Note: Here both the tables can be large as well.
 So let us try to see an example. We need to create 2 tables bucketed on join column. We will have same number of buckets in both tables.
+So we can perform SMB on 2 large tables also
+
+# We need to drop the table orders_bucketed and customers_bucketed
+
+hive> drop table orders_bucketed;
+OK
+Time taken: 0.475 seconds
+
+hive> drop table customers_bucketed;
+OK
+Time taken: 0.151 seconds
+
+What do you expect? After dropping table is the data deleted or not?
+
+Since, These were external tables so you will still be seeing the data. As only metadata is dropped. So we need to delete the data manually.
+
+[cloudera@quickstart ~]$ hadoop fs -rm -r /user/hive/warehouse/bigdatabysumit.db/customers_bucketed
+Deleted /user/hive/warehouse/bigdatabysumit.db/customers_bucketed
+[cloudera@quickstart ~]$ hadoop fs -rm -r /user/hive/warehouse/bigdatabysumit.db/orders_bucketed
+Deleted /user/hive/warehouse/bigdatabysumit.db/orders_bucketed
+
+# We need to set the below properties:
+
+set hive.auto.convert.sortmerge.join=true;
+set hive.auto.convert.sortmerge.join.noconditionaltask=true;
+set hive.optimize.bucketmapjoin=true;
+set hive.optimize.bucketmapjoin.sortedmerge=true;
+set hive.enforce.bucketing=true;
+set hive.enforce.sorting=true;
+set hive.auto.convert.join=true;
 
 
 
