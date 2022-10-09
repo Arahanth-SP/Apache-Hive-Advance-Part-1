@@ -122,6 +122,30 @@ hive> use bigdatabysumit;
 OK
 Time taken: 0.116 seconds
 
+# Create Hive external tables
+
+CREATE exteranl TABLE orders(
+order_id int,
+order_date string,
+order_customer_id int,
+order_status string)
+row format delimited fields terminated by ','
+stored as textfile
+location '/user/cloudera/orders';
+
+CREATE external TABLE customers(
+customer_id int,
+customer_fname string,
+customer_lname string,
+customer_email string,
+customer_password string,
+customer_street string,
+customer_city string,
+customer_state string,
+customer_zipcode string)
+row format delimited fields terminated by ','
+stored as textfile
+location '/user/cloudera/customers';
 
 
 
