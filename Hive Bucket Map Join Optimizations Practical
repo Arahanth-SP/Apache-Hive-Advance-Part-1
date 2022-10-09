@@ -30,17 +30,19 @@ We need to get data from these 2 tables which are available in mysql and we want
 1.	Sqoop Import to get orders and customers data in hdfs.
 2.	Create hive external tables on top of this hdfs data.
 
-#Importing the 2 datasets
+#Importing the 2 datasets orders and customers from mysql located in retail_db database
 sqoop import \
---connect jdbc:mysql//quickstart.cloudera:3306/retail_db \
+--connect jdbc:mysql://quickstart.cloudera:3306/retail_db \
 --username retail_dba \
 --password cloudera \
 --table orders \
 --warehouse-dir /user/cloudera
 
 sqoop import \
---connect jdbc:mysql//quickstart.cloudera:3306/retail_db \
+--connect jdbc:mysql://quickstart.cloudera:3306/retail_db \
 --username retail_dba \
---password clodera \
+--password cloudera \
 --table customers \
 --warehouse-dir /user/cloudera
+
+
