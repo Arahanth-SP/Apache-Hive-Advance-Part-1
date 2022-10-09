@@ -552,6 +552,21 @@ customer_state string,
 customer_zipcode string) clustered
 by(customer_id) sorted by(customer_id asc) into 4 buckets row format delimited fields terminated BY ',';
 
+hive> CREATE TABLE customers_bucketed(
+    > customer_id int,
+    > customer_fname string,
+    > customer_lname string,
+    > customer_email string,
+    > customer_password string,
+    > customer_street string,
+    > customer_city string,
+    > customer_state string,
+    > customer_zipcode string) clustered
+    > by(customer_id) sorted by(customer_id asc) into 4 buckets row format delimited fields terminated BY ',';
+OK
+Time taken: 0.158 seconds
+
+
 #Loading the data into bucketed table
 
 insert into customers_bucketed select * from customers;
@@ -565,9 +580,33 @@ order_customer_id int,
 order_status string) clustered
 by(order_customer_id) sorted by(order_customer_id asc) into 4 buckets row format delimited fields terminated BY ',';
 
+hive> CREATE TABLE orders_bucketed(
+    > order_id int,
+    > order_date string,
+    > order_customer_id int,
+    > order_status string) clustered
+    > by(order_customer_id) sorted by(order_customer_id asc) into 4 buckets row format delimited fields terminated BY ',';
+OK
+Time taken: 0.106 seconds
+
+
 # Loading data into orders_bucketed table
 insert into orders_bucketed select * from orders;
 
 
+[cloudera@quickstart ~]$ hadoop fs -ls /user/hive/warehouse/bigdatabysumit.db/customers_bucketed
+Found 4 items
+-rwxrwxrwx   1 cloudera supergroup     238225 2022-10-09 05:27 /user/hive/warehouse/bigdatabysumit.db/customers_bucketed/000000_0
+-rwxrwxrwx   1 cloudera supergroup     238627 2022-10-09 05:27 /user/hive/warehouse/bigdatabysumit.db/customers_bucketed/000001_0
+-rwxrwxrwx   1 cloudera supergroup     238066 2022-10-09 05:27 /user/hive/warehouse/bigdatabysumit.db/customers_bucketed/000002_0
+-rwxrwxrwx   1 cloudera supergroup     238607 2022-10-09 05:27 /user/hive/warehouse/bigdatabysumit.db/customers_bucketed/000003_0
+
+
+[cloudera@quickstart ~]$ hadoop fs -ls /user/hive/warehouse/bigdatabysumit.db/orders_bucketed
+Found 4 items
+-rwxrwxrwx   1 cloudera supergroup     754582 2022-10-09 05:31 /user/hive/warehouse/bigdatabysumit.db/orders_bucketed/000000_0
+-rwxrwxrwx   1 cloudera supergroup     755418 2022-10-09 05:31 /user/hive/warehouse/bigdatabysumit.db/orders_bucketed/000001_0
+-rwxrwxrwx   1 cloudera supergroup     748883 2022-10-09 05:31 /user/hive/warehouse/bigdatabysumit.db/orders_bucketed/000002_0
+-rwxrwxrwx   1 cloudera supergroup     741061 2022-10-09 05:31 /user/hive/warehouse/bigdatabysumit.db/orders_bucketed/000003_0
 
 
