@@ -23,3 +23,9 @@ Consider we have 2 tables
 One of them is big table and other is small table
 
 
+In mysql in cloudera there is a database called as retail_db
+This database has orders and customers table
+We need to get data from these 2 tables which are available in mysql and we want to import it to hdfs.
+
+1.	Sqoop Import to get orders and customers data in hdfs.
+2.	Create hive external tables on top of this hdfs data.
