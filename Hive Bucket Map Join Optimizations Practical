@@ -538,7 +538,35 @@ set hive.enforce.bucketing=true;
 set hive.enforce.sorting=true;
 set hive.auto.convert.join=true;
 
+# Create first bucketed & sorted table
 
+CREATE TABLE customers_bucketed(
+customer_id int,
+customer_fname string,
+customer_lname string,
+customer_email string,
+customer_password string,
+customer_street string,
+customer_city string,
+customer_state string,
+customer_zipcode string) clustered
+by(customer_id) sorted by(customer_id asc) into 4 buckets row format delimited fields terminated BY ',';
+
+#Loading the data into bucketed table
+
+insert into customers_bucketed select * from customers;
+
+#Create Second bucketed & sorted table
+
+CREATE TABLE orders_bucketed(
+order_id int,
+order_date string,
+order_customer_id int,
+order_status string) clustered
+by(order_customer_id) sorted by(order_customer_id asc) into 4 buckets row format delimited fields terminated BY ',';
+
+# Loading data into orders_bucketed table
+insert into orders_bucketed select * from orders;
 
 
 
