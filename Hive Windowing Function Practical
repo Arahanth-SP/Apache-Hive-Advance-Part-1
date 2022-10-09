@@ -133,6 +133,25 @@ hive> create table groceries1(
 OK
 Time taken: 0.133 seconds
 
+# checking the contents of groceries1.csv
+
+[cloudera@quickstart Downloads]$ cat groceries1.csv
+o1,Seattle,Bananas,2017-01-01,7
+o2,Kent,Apples,2017-01-02,20
+o3,Bellevue,Flowers,2017-01-02,10
+o4,Redmond,Meat,2017-01-03,40
+o5,Seattle,Potatoes,2017-01-04,9
+o6,Bellevue,Bread,2017-01-04,5
+o7,Redmond,Bread,2017-01-05,5
+o8,Issaquah,Onion,2017-01-05,4
+o9,Redmond,Cheese,2017-01-05,15
+10,Issaquah,Onion,2017-01-06,4
+11,Renton,Bread,2017-01-05,5
+12,Issaquah,Onion,2017-01-07,4
+13,Sammamish,Bread,2017-01-07,5
+14,Issaquah,Tomato,2017-01-07,6
+
+
 # Loading the data into groceries1 table
 
 load data local inpath '/home/cloudera/Downloads/groceries1.csv' into table groceries1;
@@ -143,6 +162,56 @@ Table trendytech.groceries1 stats: [numFiles=1, totalSize=437]
 OK
 Time taken: 0.364 seconds
 
+hive> select * from groceries1;
+OK
+o1	Seattle	Bananas	2017-01-01	7.0
+o2	Kent	Apples	2017-01-02	20.0
+o3	Bellevue	Flowers	2017-01-02	10.0
+o4	Redmond	Meat	2017-01-03	40.0
+o5	Seattle	Potatoes	2017-01-04	9.0
+o6	Bellevue	Bread	2017-01-04	5.0
+o7	Redmond	Bread	2017-01-05	5.0
+o8	Issaquah	Onion	2017-01-05	4.0
+o9	Redmond	Cheese	2017-01-05	15.0
+10	Issaquah	Onion	2017-01-06	4.0
+11	Renton	Bread	2017-01-05	5.0
+12	Issaquah	Onion	2017-01-07	4.0
+13	Sammamish	Bread	2017-01-07	5.0
+14	Issaquah	Tomato	2017-01-07	6.0
+Time taken: 0.141 seconds, Fetched: 14 row(s)
+
+# To get revenue running total for each day:
+
+from groceries1
+select id, revenue, day, sum(revenue) over (partition by day
+order by id) as running_total;
+
+hive> from groceries1
+    > select id, revenue, day, sum(revenue) over (partition by day
+    > order by id) as running_total;
+
+# To get running count of no of records for each day:
+
+from groceries1
+select id, revenue, day, count(id) over (partition by day
+order by id) as running_count;
+
+hive> from groceries1
+    > select id, revenue, day, count(id) over (partition by day
+    > order by id) as running_count;
+
+# Revenue running total for each day without order by key specified:
+
+from groceries1
+select id, revenue, day, sum(revenue) over (partition by day) as running_sum;
+
+# Moving Averages using a Window Function
+
+Calculate aggregations over a window of a specific size
+
+from groceries1
+select id, revenue, day, avg(revenue) over (
+order by id rows between 3 preceding and current row ) as running_average;
 
 
 
