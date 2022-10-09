@@ -124,7 +124,7 @@ Time taken: 0.116 seconds
 
 # Create Hive external tables
 
-CREATE exteranl TABLE orders(
+CREATE external TABLE orders(
 order_id int,
 order_date string,
 order_customer_id int,
@@ -146,6 +146,56 @@ customer_zipcode string)
 row format delimited fields terminated by ','
 stored as textfile
 location '/user/cloudera/customers';
+
+
+hive> CREATE external TABLE orders(
+    > order_id int,
+    > order_date string,
+    > order_customer_id int,
+    > order_status string)
+    > row format delimited fields terminated by ','
+    > stored as textfile
+    > location '/user/cloudera/orders';
+OK
+Time taken: 0.508 seconds
+
+hive> select * from orders limit 5;
+OK
+1	2013-07-25 00:00:00.0	11599	CLOSED
+2	2013-07-25 00:00:00.0	256	PENDING_PAYMENT
+3	2013-07-25 00:00:00.0	12111	COMPLETE
+4	2013-07-25 00:00:00.0	8827	CLOSED
+5	2013-07-25 00:00:00.0	11318	COMPLETE
+Time taken: 1.611 seconds, Fetched: 5 row(s)
+
+hive> select count(*) from orders;
+
+
+hive> CREATE external TABLE customers(
+    > customer_id int,
+    > customer_fname string,
+    > customer_lname string,
+    > customer_email string,
+    > customer_password string,
+    > customer_street string,
+    > customer_city string,
+    > customer_state string,
+    > customer_zipcode string)
+    > row format delimited fields terminated by ','
+    > stored as textfile
+    > location '/user/cloudera/customers';
+OK
+Time taken: 0.487 seconds
+
+hive> select * from customers limit 5;
+OK
+1	Richard	Hernandez	XXXXXXXXX	XXXXXXXXX	6303 Heather Plaza	Brownsville	TX	78521
+2	Mary	Barrett	XXXXXXXXX	XXXXXXXXX	9526 Noble Embers Ridge	Littleton	CO	80126
+3	Ann	Smith	XXXXXXXXX	XXXXXXXXX	3422 Blue Pioneer Bend	Caguas	PR	00725
+4	Mary	Jones	XXXXXXXXX	XXXXXXXXX	8324 Little Common	San Marcos	CA	92069
+5	Robert	Hudson	XXXXXXXXX	XXXXXXXXX	10 Crystal River Mall 	Caguas	PR	00725
+Time taken: 1.451 seconds, Fetched: 5 row(s)
+
 
 
 
