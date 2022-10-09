@@ -439,4 +439,76 @@ When we created the external table we didn’t specify any location. That is why
 /user/hive/warehouse/bigdatabysumit.db/orders_bucketed
 
 
+[cloudera@quickstart ~]$ hadoop fs -ls /user/hive/warehouse/bigdatabysumit.db/customers_bucketed
+Found 4 items
+-rwxrwxrwx   1 cloudera supergroup     238225 2022-10-09 04:29 /user/hive/warehouse/bigdatabysumit.db/customers_bucketed/000000_0
+-rwxrwxrwx   1 cloudera supergroup     238627 2022-10-09 04:29 /user/hive/warehouse/bigdatabysumit.db/customers_bucketed/000001_0
+-rwxrwxrwx   1 cloudera supergroup     238066 2022-10-09 04:29 /user/hive/warehouse/bigdatabysumit.db/customers_bucketed/000002_0
+-rwxrwxrwx   1 cloudera supergroup     238607 2022-10-09 04:29 /user/hive/warehouse/bigdatabysumit.db/customers_bucketed/000003_0
+
+[cloudera@quickstart ~]$ hadoop fs -ls /user/hive/warehouse/bigdatabysumit.db/orders_bucketed
+Found 8 items
+-rwxrwxrwx   1 cloudera supergroup     375671 2022-10-09 04:36 /user/hive/warehouse/bigdatabysumit.db/orders_bucketed/000000_0
+-rwxrwxrwx   1 cloudera supergroup     376056 2022-10-09 04:36 /user/hive/warehouse/bigdatabysumit.db/orders_bucketed/000001_0
+-rwxrwxrwx   1 cloudera supergroup     374213 2022-10-09 04:36 /user/hive/warehouse/bigdatabysumit.db/orders_bucketed/000002_0
+-rwxrwxrwx   1 cloudera supergroup     373129 2022-10-09 04:36 /user/hive/warehouse/bigdatabysumit.db/orders_bucketed/000003_0
+-rwxrwxrwx   1 cloudera supergroup     378911 2022-10-09 04:36 /user/hive/warehouse/bigdatabysumit.db/orders_bucketed/000004_0
+-rwxrwxrwx   1 cloudera supergroup     379362 2022-10-09 04:36 /user/hive/warehouse/bigdatabysumit.db/orders_bucketed/000005_0
+-rwxrwxrwx   1 cloudera supergroup     374670 2022-10-09 04:39 /user/hive/warehouse/bigdatabysumit.db/orders_bucketed/000006_0
+-rwxrwxrwx   1 cloudera supergroup     367932 2022-10-09 04:39 /user/hive/warehouse/bigdatabysumit.db/orders_bucketed/000007_0
+
+
+hive> select * from customers_bucketed limit 5;
+OK
+1556	Mary	Smith	XXXXXXXXX	XXXXXXXXX	4746 Quaking Bear Valley	Las VegasNV	89117
+3304	Amanda	Gibson	XXXXXXXXX	XXXXXXXXX	7894 Old Circle	Chicago	IL	60630
+4664	Mary	Cole	XXXXXXXXX	XXXXXXXXX	2991 Silver Circuit	Caguas	PR	00725
+9324	Willie	Parker	XXXXXXXXX	XXXXXXXXX	4388 Burning Goose Ridge	Madison	WI	53704
+3888	Scott	Robles	XXXXXXXXX	XXXXXXXXX	5104 Jagged Park	Miami	FL	33162
+Time taken: 0.134 seconds, Fetched: 5 row(s)
+
+
+hive> select * from orders_bucketed limit 5;
+OK
+67783	2013-11-06 00:00:00.0	11872	COMPLETE
+3466	2013-08-14 00:00:00.0	10312	PENDING_PAYMENT
+22288	2013-12-08 00:00:00.0	6016	CANCELED
+51560	2014-06-13 00:00:00.0	832	CLOSED
+31594	2014-02-05 00:00:00.0	10888	COMPLETE
+Time taken: 0.116 seconds, Fetched: 5 row(s)
+
+
+
+# Set the below property 
+
+There is a property:
+set hive.optimize.bucketmapjoin
+
+We need to set it to true
+set hive.optimize.bucketmapjoin=true;
+
+hive> set hive.optimize.bucketmapjoin;
+hive.optimize.bucketmapjoin=true
+
+# Now try running the join query on bucketed tables
+
+SELECT c.customer_id, c.customer_fname, c.customer_lname, o.order_id, o.order_date FROM customers_bucketed c JOIN orders_bucketed o ON (
+c.customer_id = o.order_customer_id) limit 10;
+
+# The auto convert property is not set; we can set the auto convert property
+
+set hive.auto.convert.join;
+
+# Sort Merge Bucket Map Join (SMB)
+
+Conditions for Sort Merge Bucket join (SMB):
+1.	Both the tables should be bucketed on the join column
+2.	Number of buckets in larger table should be exactly equal to number of buckets in the smaller table
+3.	Data in both tables should be sorted based on join column.
+Note: Here both the tables can be large as well.
+So let us try to see an example. We need to create 2 tables bucketed on join column. We will have same number of buckets in both tables.
+
+
+
+
 
