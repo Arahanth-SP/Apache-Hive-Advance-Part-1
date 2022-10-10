@@ -1,8 +1,8 @@
 # Ranking in Hive
 
-1.Rank
-2.Dense Rank
-3.Row Number
+1.Rank : Ranking based on descending order of score. Highest score will be rank 1 and Ties are assigned same rank with next ranking skipped
+2.Dense Rank : Dense ranking gives ranking. ranks are consecutive no ranks are skipped even in case of ties
+3.Row Number : Row number assigns unique numbers to each row given the order by clause
 4.Partition By
 
 # Let us first create the table and load the data
@@ -87,9 +87,34 @@ Bhut	800
 Lio	500
 Time taken: 1.344 seconds, Fetched: 16 row(s)
 
+# Ranking based on scores
 
+select name, score, rank() over(order by score desc) as ranking
+from rank_test;
 
+hive> select name, score, rank() over(order by score desc) as ranking
+    > from rank_test;
 
+# Dense_Ranking based on scores
+
+select name, score, dense_rank() over(order by score desc) as ranking
+from rank_test;
+
+hive> select name, score, dense_rank() over(order by score desc) as ranking
+    > from rank_test;
+
+# Row Number: Row Number assigns unique numbers to each row given the order by clause
+
+select name, score, row_number() over(order by score desc) as ranking
+from rank_test;
+
+# Row Number with partition by clause
+
+select name, score, row_number() over(partition by name order by score desc) as ranking from rank_test;
+
+The above query first groups based on names and then do the ranking for each group.
+
+hive> select name, score, row_number() over(partition by name order by score desc) as ranking from rank_test;
 
 
 
