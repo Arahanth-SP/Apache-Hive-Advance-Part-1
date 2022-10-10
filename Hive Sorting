@@ -66,6 +66,10 @@ select order_value from order order by order_value;
 hive> select order_value from order order by order_value;
 
 
+Order by - uses one reducer, and it does complete sorting
+
+Sort by - can use more than one reducer, total ordering is not guaranteed.
+
 # Sort By
 
 Sort by can use multiple reducers
@@ -75,6 +79,10 @@ Below 2 properties define how many reducers will be there:
 
 set hive.exec.reducers.bytes.per.reducer
 set mapred.reduce.tasks
+
+hive> set hive.exec.reducers.bytes.per.reducer;
+hive.exec.reducers.bytes.per.reducer=256000000
+
 
 
 
