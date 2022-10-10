@@ -68,7 +68,9 @@ hive> select order_value from order order by order_value;
 
 Order by - uses one reducer, and it does complete sorting
 
-Sort by - can use more than one reducer, total ordering is not guaranteed.
+Sort by - can use more than one reducer, total ordering is not guaranteed
+
+Distribute by - Distribute by ensures each of the reducer gets non overlapping set of values
 
 # Sort By
 
@@ -82,6 +84,36 @@ set mapred.reduce.tasks
 
 hive> set hive.exec.reducers.bytes.per.reducer;
 hive.exec.reducers.bytes.per.reducer=256000000
+
+hive> set mapred.reduce.tasks;
+mapred.reduce.tasks=-1
+
+hive> set mapred.reduce.tasks =2;
+hive> set mapred.reduce.tasks;
+mapred.reduce.tasks=2
+
+
+hive> select order_value from order sort by order_value;
+
+#Distribute by
+
+select order_value from order distribute by order_value;
+
+hive> select order_value from order distribute by order_value;
+
+# Distribute by sort by
+
+If we need non overlapping set of values on each reducer and if we need sorting as well then we should use distribute by sort by.
+
+select order_value from order distribute by order_value sort by order_value;
+
+# Cluster by
+It is an alternative to doing distribute by sort by.
+
+Distribute by + sort by = cluster by
+
+select order_value from order cluster by order_value;
+
 
 
 
