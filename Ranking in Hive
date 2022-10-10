@@ -1,0 +1,97 @@
+# Ranking in Hive
+
+1.Rank
+2.Dense Rank
+3.Row Number
+4.Partition By
+
+# Let us first create the table and load the data
+
+Note: we will be considering rank_dataset.csv as our dataset for practicals
+
+[cloudera@quickstart Downloads]$ cat rank_dataset.csv
+John,1500
+Albert,1500
+Mark,1000
+Frank,1150
+Loopa,1100
+Lui,1300
+John,1300
+John,900
+Lesa,1500
+Lesa,900
+Pars,800
+leo,700
+leo,1500
+lock,650
+Bhut,800
+Lio,500
+
+# Create a Table rank_test
+
+create table rank_test(
+name string,
+score int)
+row format delimited fields terminated by ','
+lines terminated by '\n' stored as textfile;
+
+
+# Load the data into table
+load data local inpath '/home/cloudera/Downloads/rank_dataset.csv'
+into table rank_test;
+
+# connect to Hive
+
+[cloudera@quickstart ~]$ hive
+
+Logging initialized using configuration in file:/etc/hive/conf.dist/hive-log4j.properties
+WARNING: Hive CLI is deprecated and migration to Beeline is recommended.
+hive> 
+hive> use trendytech;
+OK
+Time taken: 2.666 seconds
+
+hive> create table rank_test(
+    > name string,
+    > score int)
+    > row format delimited fields terminated by ','
+    > lines terminated by '\n' stored as textfile;
+OK
+Time taken: 1.05 seconds
+
+hive> load data local inpath '/home/cloudera/Downloads/rank_dataset.csv'
+    > into table rank_test;
+Loading data to table trendytech.rank_test
+Table trendytech.rank_test stats: [numFiles=1, totalSize=153]
+OK
+Time taken: 1.679 seconds
+
+
+hive> select * from rank_test;
+OK
+John	1500
+Albert	1500
+Mark	1000
+Frank	1150
+Loopa	1100
+Lui	1300
+John	1300
+John	900
+Lesa	1500
+Lesa	900
+Pars	800
+leo	700
+leo	1500
+lock	650
+Bhut	800
+Lio	500
+Time taken: 1.344 seconds, Fetched: 16 row(s)
+
+
+
+
+
+
+
+
+
