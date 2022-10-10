@@ -1,1 +1,82 @@
 # Order by, sort by, distribute by, cluster by
+
+
+# Order by
+
+Order by gurantees total ordering
+Only 1 Reducer is used
+
+There are some limitations in the "order by" clause.
+In strict mode limit clause is compulsory
+hive.mapred.mode=strict
+
+order of Null's by default is Null's are shown first when sorting in ascending order
+
+# Create a table by name order
+
+use trendytech;
+
+create table order(order_id string, order_value int)
+row format delimited fields terminated by ',';
+
+# Load data into table from text file
+
+load data local inpath '/home/cloudera/Downloads/order.txt'
+into table order;
+
+select * from order;
+
+hive> use trendytech;
+OK
+Time taken: 0.037 seconds
+hive> create table order(order_id string, order_value int)
+    > row format delimited fields terminated by ',';
+OK
+Time taken: 0.2 seconds
+
+[cloudera@quickstart ~]$ cd Downloads/
+[cloudera@quickstart Downloads]$ cat order.txt
+
+hive> load data local inpath '/home/cloudera/Downloads/order.txt'
+    > into table order;
+Loading data to table trendytech.order
+Table trendytech.order stats: [numFiles=1, totalSize=164]
+OK
+Time taken: 0.505 seconds
+
+
+hive> select * from order limit 10;
+OK
+aa	1
+bb	1
+dd	5
+ef	2
+teh	1
+dth	4
+dfh	5
+h	3
+sr	1
+ef	1
+Time taken: 0.131 seconds, Fetched: 10 row(s)
+
+# Now use order by in you query
+
+select order_value from order order by order_value;
+
+hive> select order_value from order order by order_value;
+
+
+# Sort By
+
+Sort by can use multiple reducers
+Local sorting will happen on each reducer
+we cannot guarantee a total ordering
+Below 2 properties define how many reducers will be there:
+
+set hive.exec.reducers.bytes.per.reducer
+set mapred.reduce.tasks
+
+
+
+
+
