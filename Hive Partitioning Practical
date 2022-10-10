@@ -25,6 +25,7 @@ zipcode char(5))
 partitioned by (state char(2))
 row format delimited fields terminated by ','
 
+Note: Partitioned column is not part of table columns; In the above scenario Table is partitioned by State and which is not part of table column
 
 [cloudera@quickstart ~]$ hive
 
